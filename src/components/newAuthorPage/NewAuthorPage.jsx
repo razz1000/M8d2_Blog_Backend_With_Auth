@@ -1,11 +1,15 @@
-import React from "react"
+import React, { useState } from "react"
 import { Container, Row, Form, Col, Button } from "react-bootstrap"
 
 let NewAuthorPage = () => {
   
+    let [formSubmitInfo, setFormSubmitInfo] = useState([])
+
     let onSubmitFunction = (event) => {
         event.preventDefault()
-        console.log(event.target.parentElement.querySelector(".input-field").value)
+        setFormSubmitInfo(event.target.parentElement.querySelector(".input-field").value)
+        console.log(event.target.parentElement.querySelector(".input-field").value) 
+        
     }
   
   
@@ -14,7 +18,7 @@ let NewAuthorPage = () => {
             <Row>
         <Col>
         <h2>Create a new author profile!</h2>
-        <Form>
+        <Form onSubmit={onSubmitFunction}>
   <Form.Group controlId="formBasicEmail">
     <Form.Label>Email address</Form.Label>
     <Form.Control type="email" placeholder="Enter email" />
@@ -43,10 +47,10 @@ let NewAuthorPage = () => {
     <Form.Check type="checkbox" label="I am ok with recieving promotional emails after I have signed up." />
   </Form.Group>
   <Button variant="primary" type="submit"
-  onSubmit={(event) => {
+  /* onSubmit={(event) => {
     event.preventDefault()
     console.log(event.target.parentElement.querySelector(".input-field").value)
-  }}>
+  }} */>
     Submit
   </Button>
 </Form>
