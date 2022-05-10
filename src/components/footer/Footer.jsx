@@ -9,7 +9,7 @@ const Footer = (props) => {
         paddingBottom: 50,
       }}
     >
-      <Container>{`${new Date().getFullYear()} - © Strive School | Developed for homework projects.`}</Container>
+      <Container>{`${new Date().getFullYear()} - © Strive School Rasmus | Developed for homework projects.`}</Container>
     </footer>
   );
 };
