@@ -1,9 +1,11 @@
 import express from "express"
 import authorRouter from "./apis/authors/index.js"
 import listEndPoints from "express-list-endpoints"
-
+import cors from "cors"
 
 const server = express()
+
+server.use(cors())
 
 const port = 3003
 
