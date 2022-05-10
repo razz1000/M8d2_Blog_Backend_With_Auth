@@ -5,6 +5,7 @@ import Home from "./views/home/Home";
 import Blog from "./views/blog/Blog";
 import NewBlogPost from "./views/new/New";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import NewAuthorPage from "./components/newAuthorPage/NewAuthorPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" exact element={<Home />} />
         <Route path="/blog/:id" element={<Blog />} />
         <Route path="/new" element={<NewBlogPost />} />
+        <Route path="/newauthorpage" element={<NewAuthorPage />} />
       </Routes>
       <Footer />
     </Router>
