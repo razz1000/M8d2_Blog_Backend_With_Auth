@@ -1,58 +1,56 @@
 import { checkSchema, validationResult } from "express-validator";
 import createError from "http-errors";
 
-const blogPostsSchema = {	
-    category: {
-        in: ["body"],
-        isString: {
-            errorMessage: "Category is a mandatory field to add and it must be of type string",
-        },
-    },
-    title: {
-        in: ["body"],
-        isString: {
-            errorMessage: "Title is a mandatory field to add and it must be of type string",
-        },
-    },
-    cover: {
-        in: ["body"],
-        inString: {
-            errorMessage: "Cover is a mandatory field to add and must be a string (the url string)",
-        },
-    },
-    content: {
-        in: ["body"],
-        inString: {
-            errorMessage: "Content is a mandatory field to add and must be a string",
-        },
-    },
+const postSchema = {
+  category: {
+    in: ["body"],
+    isString: { errorMessage: "Category is required" },
+  },
+  title: {
+    in: ["body"],
+    isString: { errorMessage: "Title is required" },
+  },
 
-/*     "readTime": {
-        "value": 2,
-      "unit": "minute"
-     },
-    "author": {
-        "name": "AUTHOR AVATAR NAME",
-        "avatar":"AUTHOR AVATAR LINK"
-        },
-     "content":"HTML",
-     "createdAt": "NEW DATE" */
-    }
+  cover: {
+    in: ["body"],
+    isString: { errorMessage: "Cover is required" },
+  },
 
+  "readTime.value": {
+    in: ["body"],
+    isInt: { errorMessage: "Read time is required" },
+  },
 
-    //----Middleware chain-----
+  "readTime.unit": {
+    in: ["body"],
+    isString: { errorMessage: "Unit is required" },
+  },
 
-    export const checkBlogPostsSchema = checkSchema(blogPostsSchema)
+  "author.name": {
+    in: ["body"],
+    isString: { errorMessage: "Author's Name is required" },
+  },
+  "author.avatar": {
+    in: ["body"],
+    isString: { errorMessage: "Author's Avatar is required" },
+  },
 
-    export const checkValidationResult = (request, response, next) => {
-        
-        const errors = validationResult(request)
-        
-        console.log(errors)
-        
-            if (!errors.isEmpty()) {
-                next(createError(400, "Sorry, Validation errors", {errorsList: errors.array() }))
-            } else {
-                next()
-            }
-            }
+  createdAt: {
+    in: ["body"],
+  },
+  content: {
+    in: ["body"],
+    isString: { errorMessage: "Content is required" },
+  },
+};
+
+export const checkPostSchema = checkSchema(postSchema);
+export const checkPostValidationResult = (req, res, next) => {
+  const errors = validationResult(req);
+  console.log(errors);
+  if (!errors.isEmpty()) {
+    next(createError(400, "validation errors", { errorsList: errors.array() }));
+  } else {
+    next();
+  }
+};
