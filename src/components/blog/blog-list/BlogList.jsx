@@ -1,6 +1,7 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
-import posts from "../../../data/posts.json";
+/* import posts from "../../../data/posts.json"; */
+import posts from "../../../apis/blogPosts/blogposts.json"
 import BlogItem from "../blog-item/BlogItem";
 
 const BlogList = (props) => {

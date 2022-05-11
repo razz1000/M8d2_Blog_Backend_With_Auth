@@ -1,4 +1,4 @@
-import { checkSchema, validationresult } from "express-validator";
+import { checkSchema, validationResult } from "express-validator";
 import createError from "http-errors";
 
 const blogPostsSchema = {	
@@ -40,4 +40,19 @@ const blogPostsSchema = {
     }
 
 
-    
+    //----Middleware chain-----
+
+    export const checkBlogPostsSchema = checkSchema(blogPostsSchema)
+
+    export const checkValidationResult = (request, response, next) => {
+        
+        const errors = validationResult(request)
+        
+        console.log(errors)
+        
+            if (!errors.isEmpty()) {
+                next(createError(400, "Sorry, Validation errors", {errorsList: errors.array() }))
+            } else {
+                next()
+            }
+            }

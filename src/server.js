@@ -8,7 +8,7 @@ import { badRequestErrorHandler, unathorizedErrorHandler, notFoundErrorHandler, 
 const server = express()
 const port = 3003
 
-
+//----MIDDLEWARES-------
 
 server.use(cors())
 server.use(express.json())
