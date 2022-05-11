@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Container, Row, Form, Col, Button } from "react-bootstrap"
-import cors from "cors"
+
 
 let NewAuthorPage = () => {
     
