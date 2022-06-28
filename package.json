@@ -35,5 +35,13 @@
   "devDependencies": {
     "dotenv": "^16.0.1",
     "nodemon": "^2.0.16"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/razz1000/m5d2v2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/razz1000/m5d2v2/issues"
+  },
+  "homepage": "https://github.com/razz1000/m5d2v2#readme"
 }
