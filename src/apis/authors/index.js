@@ -1,122 +1,250 @@
-import express from "express"
-import createError from "http-errors"
-import uniqid from "uniqid"
-import multer from "multer"
+import express from "express";
+import createError from "http-errors";
+import uniqid from "uniqid";
+import multer from "multer";
 import {
   getAuthors,
   writeAuthors,
   saveAuthorsAvatars,
-} from "../../lib/fsTools.js"
-import { sendRegistrationEmail } from "../../lib/email-tools.js"
+} from "../../lib/fsTools.js";
+import { sendRegistrationEmail } from "../../lib/email-tools.js";
+import AuthorModel from "./model.js";
+import { basicAuthMiddleware } from "../../auth/basic.js";
+import { adminOnlyMiddleware } from "../../auth/admin.js";
 
-const authorsRouter = express.Router()
+const authorsRouter = express.Router();
 
 // POST /authors
 authorsRouter.post("/", async (req, res, next) => {
   try {
-    const newAuthor = { ...req.body, id: uniqid(), createdAt: new Date() }
-    const authors = await getAuthors()
-    authors.push(newAuthor)
-    await writeAuthors(authors)
-    const { email } = req.body
-    await sendRegistrationEmail(email)
-    res.status(201).send({ message: "Author created successfully" })
+    const newAuthor = new AuthorModel(req.body);
+    const { _id } = await newAuthor.save();
+    res.status(201).send({ _id });
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+});
 
-// GET /authors
-authorsRouter.get("/", async (req, res, next) => {
+authorsRouter.get(
+  "/",
+  basicAuthMiddleware,
+  adminOnlyMiddleware,
+  async (req, res, next) => {
+    try {
+      const author = await AuthorModel.find({});
+      res.send(author);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+authorsRouter.get(
+  "/me/stories",
+  basicAuthMiddleware,
+  async (req, res, next) => {
+    try {
+      res.send(req.author);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+authorsRouter.put("/me", basicAuthMiddleware, async (req, res, next) => {
   try {
-    const authors = await getAuthors()
+    const modifiedAuthor = await AuthorModel.findByIdAndUpdate(
+      req.author._id,
+      req.body,
+      { new: true }
+    );
+    res.send(modifiedAuthor);
+  } catch (error) {
+    next(error);
+  }
+});
+
+authorsRouter.delete("/me", basicAuthMiddleware, async (req, res, next) => {
+  try {
+    await AuthorModel.findByIdAndDelete(req.author._id);
+    res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+});
+
+authorsRouter.get(
+  "/:authorId",
+  basicAuthMiddleware,
+  adminOnlyMiddleware,
+  async (req, res, next) => {
+    try {
+      const author = await AuthorModel.findById(req.params.authorId);
+      if (author) {
+        res.send(author);
+      } else {
+        next(
+          createError(404, `User with id ${req.params.authorId} not found!`)
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+authorsRouter.put(
+  "/:authorId",
+  basicAuthMiddleware,
+  adminOnlyMiddleware,
+  async (req, res, next) => {
+    try {
+      const updatedAuthor = await AuthorModel.findByIdAndUpdate(
+        req.params.authorId,
+        req.body,
+        { new: true, runValidators: true }
+      );
+      if (updatedAuthor) {
+        res.send(updatedAuthor);
+      } else {
+        next(
+          createError(404, `User with id ${req.params.authorId} not found!`)
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+authorsRouter.delete(
+  "/:authorId",
+  basicAuthMiddleware,
+  adminOnlyMiddleware,
+  async (req, res, next) => {
+    try {
+      const deletedAuthor = await AuthorModel.findByIdAndDelete(
+        req.params.authorId
+      );
+      if (deletedAuthor) {
+        res.status(204).send();
+      } else {
+        next(
+          createError(404, `User with id ${req.params.authorId} not found!`)
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+/* 
+authorsRouter.post("/", async (req, res, next) => {
+  try {
+    const newAuthor = { ...req.body, id: uniqid(), createdAt: new Date() };
+    const authors = await getAuthors();
+    authors.push(newAuthor);
+    await writeAuthors(authors);
+    const { email } = req.body;
+    await sendRegistrationEmail(email);
+    res.status(201).send({ message: "Author created successfully" });
+  } catch (error) {
+    next(error);
+  }
+});
+ */
+// GET /authors
+/* authorsRouter.get("/", async (req, res, next) => {
+  try {
+    const authors = await getAuthors();
     if (req.query && req.query.title) {
       const filteredAuthors = authors.filter((author) =>
         author.title.toLowerCase().includes(req.query.title.toLowerCase())
-      )
-      res.send(filteredAuthors)
+      );
+      res.send(filteredAuthors);
     } else {
-      res.send(authors)
+      res.send(authors);
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+}); */
 // GET /authors/:id
-authorsRouter.get("/:authorId", async (req, res, next) => {
+/* authorsRouter.get("/:authorId", async (req, res, next) => {
   try {
-    const authors = await getAuthors()
-    const author = authors.find((author) => author.id === req.params.id)
+    const authors = await getAuthors();
+    const author = authors.find((author) => author.id === req.params.id);
     if (author) {
-      res.send(author)
+      res.send(author);
     } else {
-      next(createError(404, "author with ${req.params.id} not found"))
+      next(createError(404, "author with ${req.params.id} not found"));
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+}); */
 // PUT /authors/:id
-authorsRouter.put("/:authorId", async (req, res, next) => {
+/* authorsRouter.put("/:authorId", async (req, res, next) => {
   try {
-    const authors = await getAuthors()
+    const authors = await getAuthors();
     const author = authors.findIndex(
       (author) => author.id === req.params.authorId
-    )
+    );
     if (author === -1) {
-      const oldAuthor = authors[author]
-      const newAuthor = { ...oldAuthor, ...req.body, updatedAt: new Date() }
-      authors[author] = newAuthor
-      await writeAuthors(authors)
-      res.send(newAuthor)
+      const oldAuthor = authors[author];
+      const newAuthor = { ...oldAuthor, ...req.body, updatedAt: new Date() };
+      authors[author] = newAuthor;
+      await writeAuthors(authors);
+      res.send(newAuthor);
     } else {
-      next(createError(404, "Author not found"))
+      next(createError(404, "Author not found"));
     }
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+}); */
 
 // DELETE /authors/:id
-authorsRouter.delete("/:authorId", async (req, res) => {
+/* authorsRouter.delete("/:authorId", async (req, res) => {
   try {
-    const authors = await getAuthors()
+    const authors = await getAuthors();
     const authorsLeft = authors.filter(
       (author) => author.id !== req.params.authorId
-    )
-    await writeAuthors(authorsLeft)
-    res.status(204).send()
+    );
+    await writeAuthors(authorsLeft);
+    res.status(204).send();
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+}); */
 
 //POST authors/checkEmail => check if another author has the same email. The parameter should be passed in the body. It should return true or false.
 //It should not be possible to add a new author (with POST /authors) if another has the same email
-authorsRouter.post("/checkEmail", async (req, res) => {
-  const { email } = req.body
-  const authors = await getAuthors
-  const author = authors.find((author) => author.email === email)
+/* authorsRouter.post("/checkEmail", async (req, res) => {
+  const { email } = req.body;
+  const authors = await getAuthors;
+  const author = authors.find((author) => author.email === email);
   if (author) {
     res.status(404).json({
       message: "Email already exists",
       success: false,
-    })
+    });
   } else {
     res.status(200).json({
       message: "Email is available",
       success: true,
-    })
+    });
   }
-})
+});
 authorsRouter.post(
   "/:authorId/avatar",
   multer({
     fileFilter: (req, file, multerNext) => {
       if (file.mimetype !== "image/jpeg" && file.mimetype !== "image/png") {
-        multerNext(createError(400, "Only png/jpeg allowed!"))
+        multerNext(createError(400, "Only png/jpeg allowed!"));
       } else {
-        multerNext(null, true)
+        multerNext(null, true);
       }
     },
     limits: { fileSize: 1024 * 1024 * 5 },
@@ -126,24 +254,24 @@ authorsRouter.post(
       const url = await saveAuthorsAvatars(
         req.file.originalname,
         req.file.buffer
-      )
-      const authors = await getAuthors()
+      );
+      const authors = await getAuthors();
       const author = authors.findIndex(
         (author) => author.id === req.params.authorId
-      )
+      );
       if (author !== -1) {
-        const oldAuthor = authors[author]
-        const newAuthor = { ...oldAuthor, avatar: url, updatedAt: new Date() }
-        authors[author] = newAuthor
-        await writeAuthors(authors)
-        res.send(newAuthor)
+        const oldAuthor = authors[author];
+        const newAuthor = { ...oldAuthor, avatar: url, updatedAt: new Date() };
+        authors[author] = newAuthor;
+        await writeAuthors(authors);
+        res.send(newAuthor);
       } else {
-        next(createError(404, "Author not found"))
+        next(createError(404, "Author not found"));
       }
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
-)
-
-export default authorsRouter
+);
+ */
+export default authorsRouter;

@@ -1,8 +1,23 @@
-import { checkSchema, validationResult } from "express-validator"
-import createError from "http-errors"
+/* import { checkSchema, validationResult } from "express-validator";
+import createError from "http-errors";
+ */
 
-const postSchema = {
-  category: {
+import mongoose from "mongoose";
+const { Schema, model } = mongoose;
+
+const postSchema = new Schema({
+  author: {
+    type: mongoose.Types.ObjectId,
+    ref: "Author",
+    required: true,
+  },
+
+  category: { type: String, required: true },
+});
+
+export default model("Post", postSchema);
+
+/*  category: {
     in: ["body"],
     isString: { errorMessage: "Category is required", options: { min: 1 } },
   },
@@ -21,10 +36,16 @@ const postSchema = {
     isString: { errorMessage: "Unit is required" },
   },
 
-  "author.name": {
+  author: {
+    type: mongoose.Types.ObjectId,
+    ref: "Author",
+    required: true,
+  },
+
+  /*   "author.name": {
     in: ["body"],
     isString: { errorMessage: "Author's Name is required" },
-  },
+  }, 
   "author.avatar": {
     in: ["body"],
     isString: { errorMessage: "Author's Avatar is required" },
@@ -33,10 +54,11 @@ const postSchema = {
   content: {
     in: ["body"],
     isString: { errorMessage: "Content is required", min: 1 },
-  },
-}
+  }, 
+};
 
-const postUpdateSchema = {
+*/
+/* const postUpdateSchema = {
   category: {
     in: ["body"],
     isString: { errorMessage: "Category is required", options: { min: 1 } },
@@ -81,16 +103,16 @@ const postUpdateSchema = {
     isString: { errorMessage: "Content is required", min: 1 },
     optional: true,
   },
-}
+};
 
-export const checkPostSchema = checkSchema(postSchema)
-export const checkPostUpdateSchema = checkSchema(postUpdateSchema)
+export const checkPostSchema = checkSchema(postSchema);
+export const checkPostUpdateSchema = checkSchema(postUpdateSchema);
 export const checkPostValidationResult = (req, res, next) => {
-  const errors = validationResult(req)
-  console.log(errors)
+  const errors = validationResult(req);
+  console.log(errors);
   if (!errors.isEmpty()) {
-    next(createError(400, "validation errors", { errorsList: errors.array() }))
+    next(createError(400, "validation errors", { errorsList: errors.array() }));
   } else {
-    next()
+    next();
   }
-}
+}; */
