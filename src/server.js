@@ -14,6 +14,7 @@ import {
 } from "./errorHandlers.js";
 import swaggerUIExpress from "swagger-ui-express";
 import yaml from "yamljs";
+import userRouter from "./apis/users/index.js";
 
 const server = express();
 const port = process.env.PORT || 3001;
@@ -26,6 +27,7 @@ server.use(express.json());
 // ************************************** ENDPOINTS *******************************************
 server.use("/authors", authorsRouter);
 server.use("/posts", postsRouter);
+server.use("/users", userRouter);
 
 // ************************************* ERROR HANDLERS ***************************************
 server.use(unauthorizedHandler);
