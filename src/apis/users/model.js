@@ -25,6 +25,8 @@ const userSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+
+    /*     blogposts: [{ type: Schema.Types.ObjectId, ref: "Post" }], */
   },
   {
     timestamps: true,

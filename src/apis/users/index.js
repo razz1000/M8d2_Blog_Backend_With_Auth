@@ -9,21 +9,17 @@ const userRouter = express.Router();
 
 userRouter.post("/login", async (req, res, next) => {
   try {
-    // 1. Obtain credentials from req.body
     const { email, password } = req.body;
 
-    // 2. Verify credentials
     const user = await userModel.checkCredentials(email, password);
 
     if (user) {
-      // 3. If credentials are fine --> generate an access token (JWT) then send it as a response
       const accessToken = await generateAccessToken({
         _id: user._id,
         role: user.role,
       });
       res.send({ accessToken });
     } else {
-      // 4. If credentials are not ok --> throw an error (401)
       next(createError(401, "Credentials are not ok!"));
     }
   } catch (error) {
