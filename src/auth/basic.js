@@ -2,6 +2,7 @@ import createHttpError from "http-errors";
 import atob from "atob";
 import AuthorModel from "../apis/authors/model.js";
 
+//This the basic Authentication middleware! That willl be executed on if added to an endpoint.
 export const basicAuthMiddleware = async (req, res, next) => {
   // Here we are receiving something like --> Authorization: "Basic QmV0dHllNEBnbWFpbC5jb206MTIzNA=="
   // 1. Check if authorization header is provided, if it is not --> trigger an error (401)
