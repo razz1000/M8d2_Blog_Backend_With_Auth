@@ -33,6 +33,20 @@ postsRouter.get(
 );
 
 postsRouter.get(
+  "/me/stories",
+  basicAuthMiddleware,
+  adminOnlyMiddleware,
+  async (req, res, next) => {
+    try {
+      const post = await PostModel.find({ author: req.user._id.toString() });
+      res.send(post);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+postsRouter.get(
   "/:postId",
   basicAuthMiddleware,
   adminOnlyMiddleware,
