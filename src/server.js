@@ -15,14 +15,18 @@ import {
 import swaggerUIExpress from "swagger-ui-express";
 import yaml from "yamljs";
 import userRouter from "./apis/users/index.js";
+import passport from "passport";
+import googleStrategy from "./auth/googleOAuth.js";
 
 const server = express();
 const port = process.env.PORT || 3001;
+passport.use("google", googleStrategy);
 
 // ************************************** MIDDLEWARES *****************************************
 
 server.use(cors());
 server.use(express.json());
+server.use(passport.initialize());
 
 // ************************************** ENDPOINTS *******************************************
 server.use("/authors", authorsRouter);
