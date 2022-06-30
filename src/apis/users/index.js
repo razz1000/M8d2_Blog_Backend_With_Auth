@@ -18,9 +18,10 @@ userRouter.get(
   (req, res, next) => {
     // The purpose of this endpoint is to receive a response from Google, execute the google callback function, then send a response to the client
     try {
-      const { accessToken } = req.user; // passportNext is adding accessToken and refreshToken to req.user
+      const { token } = req.user; // passportNext is adding accessToken and refreshToken to req.user
+      console.log("TOKEN", token);
       // res.send({ accessToken, refreshToken })
-      res.redirect(`${process.env.FE_URL}/users?accessToken=${accessToken}`);
+      res.redirect(`${process.env.FE_URL}/me?token=${token}`);
     } catch (error) {
       next(error);
     }

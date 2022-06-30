@@ -18,9 +18,9 @@ const googleStrategy = new GoogleStrategy(
 
       if (user) {
         // 2. If he/she is there --> generate accessToken (optionally a refreshToken)
-        const { accessToken, refreshToken } = await generateAccessToken(user);
+        const token = await generateAccessToken(user);
         // 3. Then we can go next (we go to the /googleRedirect route handler)
-        passportNext(null, { accessToken, refreshToken });
+        passportNext(null, { token });
       } else {
         // 4. Else if the user is not in our db --> create that user and generate an accessToken (optionally a refreshToken)
         const { given_name, family_name, email } = profile._json;
@@ -32,11 +32,9 @@ const googleStrategy = new GoogleStrategy(
           googleID: profile.id,
         });
         const createdUser = await newUser.save();
-        const { accessToken, refreshToken } = await generateAccessToken(
-          createdUser
-        );
+        const { token } = await generateAccessToken(createdUser);
         // 5. Next
-        passportNext(null, { accessToken, refreshToken });
+        passportNext(null, { token });
       }
     } catch (error) {
       // in case of errors we gonna use passportNext
