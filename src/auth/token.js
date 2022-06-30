@@ -2,7 +2,6 @@ import createHttpError from "http-errors";
 import { verifyAccessToken } from "./tools.js";
 
 export const JWTAuthMiddleware = async (req, res, next) => {
-  // 1. Check if authorization header is in the request, if it is not --> 401
   if (!req.headers.authorization) {
     next(
       createHttpError(

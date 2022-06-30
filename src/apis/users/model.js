@@ -25,7 +25,7 @@ const userSchema = new Schema(
       default: "user",
     },
     googleID: { type: String },
-    /*     blogposts: [{ type: Schema.Types.ObjectId, ref: "Post" }], */
+    blogposts: [{ type: Schema.Types.ObjectId, ref: "Post" }],
   },
   {
     timestamps: true,

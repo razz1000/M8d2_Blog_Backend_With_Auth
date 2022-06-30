@@ -1,5 +1,6 @@
 import express from "express";
 import userModel from "./model.js";
+import PostModel from "../posts/model.js";
 import createError from "http-errors";
 import passport from "passport";
 import { basicAuthMiddleware } from "../../auth/basic.js";
@@ -21,7 +22,7 @@ userRouter.get(
       const { token } = req.user; // passportNext is adding accessToken and refreshToken to req.user
       console.log("TOKEN", token);
       // res.send({ accessToken, refreshToken })
-      res.redirect(`${process.env.FE_URL}/me?token=${token}`);
+      res.redirect(`${process.env.FE_URL}/me/${token}`);
     } catch (error) {
       next(error);
     }
@@ -61,8 +62,11 @@ userRouter.post("/register", async (req, res, next) => {
 
 userRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
   try {
-    const me = await userModel.findById(req.user._id);
-    res.send(me);
+    /*     const me = await userModel.findById(req.user._id); */
+    /*     const blogs = await userModel.find({ user: req.user._id.toString() }); */
+    const blogs = await PostModel.find({ user: req.user._id.toString() });
+
+    res.send(blogs);
   } catch (error) {
     next(error);
   }

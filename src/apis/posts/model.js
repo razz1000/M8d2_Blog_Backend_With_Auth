@@ -31,7 +31,7 @@ const postSchema = new Schema(
     },
     comments: [{ text: String, rate: Number }],
 
-    authors: [{ type: Schema.Types.ObjectId, ref: "Author" }],
+    /*     authors: [{ type: Schema.Types.ObjectId, ref: "Author" }], */
     user: [{ type: Schema.Types.ObjectId, ref: "User" }],
     likes: [{ userId: String }],
   },
